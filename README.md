@@ -1,4 +1,4 @@
-# EBCONT IT-support action configuration parser
+# Action configuration parser
 
 ## About
 
