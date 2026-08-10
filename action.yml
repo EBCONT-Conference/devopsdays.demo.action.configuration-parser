@@ -42,5 +42,9 @@ runs:
         echo "Output JSON:"
         cat output.json
         echo "Setting output variable 'json' with the generated JSON."
-        echo "json=$(cat output.json)" >> $GITHUB_OUTPUT
+        {
+          echo "json<<EOF"
+          cat output.json
+          echo "EOF"
+        } >> "$GITHUB_OUTPUT"
 
