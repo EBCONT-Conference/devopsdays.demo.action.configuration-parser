@@ -1,0 +1,13 @@
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+name: Release Please
+
+jobs:
+  release-please:
+    name: Release Please
+    uses: EBCONT-Conference/devopsdays.demo.reusable-workflow.release-please/.github/workflows/entrypoint.yml@v1
+    secrets: inherit

@@ -1,0 +1,179 @@
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+name: Test
+
+permissions:
+  contents: read
+
+jobs:
+  helm:
+    name: Helm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configuration
+        id: configuration
+        uses: ./
+        with:
+          schema: helm
+
+  helm-overwrite:
+    name: Helm - Overwrite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configuration
+        id: configuration
+        uses: ./
+        with:
+          schema: helm
+          environment: stage
+
+  helm-overwrite-deploy:
+    name: Helm - Overwrite & deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configuration
+        id: configuration
+        uses: ./
+        with:
+          schema: helm
+          environment: stage
+          deploy: true
+
+  helm-path-overlap:
+    name: Helm - Path & overlap
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configuration
+        id: configuration
+        uses: ./
+        with:
+          schema: helm
+          path: tests/helm/overlap.yml
+        continue-on-error: true
+
+      - name: Assert failure
+        if: steps.configuration.outcome == 'success'
+        run: |
+          echo "::error::The 'Configuration' step succeeded, but it was expected to fail!"
+          exit 1
+
+  helm-single:
+    name: Helm - Single
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configuration
+        id: configuration
+        uses: ./
+        with:
+          schema: helm
+          path: tests/helm/single.yml
+
+  helm-container:
+    name: Helm - Container
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configuration
+        id: configuration
+        uses: ./
+        with:
+          schema: helm
+          path: tests/helm/container.yml
+
+  ssh:
+    name: Ssh
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configuration
+        id: configuration
+        uses: ./
+        with:
+          schema: ssh
+
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configuration
+        id: configuration
+        uses: ./
+        with:
+          schema: terraform
+
+  ecs:
+    name: ECS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configuration
+        id: configuration
+        uses: ./
+        with:
+          schema: ecs
+
+  docker:
+    name: Docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configuration
+        id: configuration
+        uses: ./
+        with:
+          schema: docker
+
+  node:
+    name: Node
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configuration
+        id: configuration
+        uses: ./
+        with:
+          schema: node
+
+  maven:
+    name: Maven
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configuration
+        id: configuration
+        uses: ./
+        with:
+          schema: maven

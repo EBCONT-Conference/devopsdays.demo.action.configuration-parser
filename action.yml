@@ -1,0 +1,29 @@
+name: Environment selection
+description: Select environment and parse schema based on context and configuration
+
+inputs:
+  schema:
+    required: true
+    description: The schema which should be parsed
+  deploy:
+    required: false
+    description: The manual deployment input value
+  path:
+    required: false
+    description: The path to the configuration
+  environment:
+    required: false
+    description: The environment which can be set to overwrite the environment determination process
+
+runs:
+  using: composite
+  steps:
+    - name: Demo sample output
+      shell: bash
+      run: |
+        echo "Running configuration parser demo with the following inputs:"
+        echo "Schema: ${{ inputs.schema }}"
+        echo "Deploy: ${{ inputs.deploy }}"
+        echo "Path: ${{ inputs.path }}"
+        echo "Environment: ${{ inputs.environment }}"
+
