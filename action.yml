@@ -15,10 +15,16 @@ inputs:
     required: false
     description: The environment which can be set to overwrite the environment determination process
 
+outputs:
+  json:
+    description: The output JSON representation of the selected schema
+    value: ${{ steps.environment.outputs.json }}
+
 runs:
   using: composite
   steps:
     - name: Demo sample output
+      id: environment
       shell: bash
       run: |
         echo "Running configuration parser demo with the following inputs:"
@@ -26,4 +32,15 @@ runs:
         echo "Deploy: ${{ inputs.deploy }}"
         echo "Path: ${{ inputs.path }}"
         echo "Environment: ${{ inputs.environment }}"
+        # write the inputs to a JSON format and to the output variable
+        echo "{" > output.json
+        echo "  \"schema\": \"${{ inputs.schema }}\"," >> output.json
+        echo "  \"deploy\": \"${{ inputs.deploy }}\"," >> output.json
+        echo "  \"path\": \"${{ inputs.path }}\"," >> output.json
+        echo "  \"environment\": \"${{ inputs.environment }}\"" >> output.json
+        echo "}" >> output.json
+        echo "Output JSON:"
+        cat output.json
+        echo "Setting output variable 'json' with the generated JSON."
+        echo "json=$(cat output.json)" >> $GITHUB_OUTPUT
 
