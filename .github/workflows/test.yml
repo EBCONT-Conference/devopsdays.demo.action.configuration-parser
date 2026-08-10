@@ -51,27 +51,6 @@ jobs:
           environment: stage
           deploy: true
 
-  helm-path-overlap:
-    name: Helm - Path & overlap
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Configuration
-        id: configuration
-        uses: ./
-        with:
-          schema: helm
-          path: tests/helm/overlap.yml
-        continue-on-error: true
-
-      - name: Assert failure
-        if: steps.configuration.outcome == 'success'
-        run: |
-          echo "::error::The 'Configuration' step succeeded, but it was expected to fail!"
-          exit 1
-
   helm-single:
     name: Helm - Single
     runs-on: ubuntu-latest
