@@ -23,28 +23,33 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Demo sample output
+    - name: Parse YAML configuration
       id: environment
       shell: bash
+      env:
+        WORKSPACE: ${{ github.workspace }}
+        INPUT_SCHEMA: ${{ inputs.schema }}
+        INPUT_PATH: ${{ inputs.path }}
       run: |
-        echo "Running configuration parser demo with the following inputs:"
-        echo "Schema: ${{ inputs.schema }}"
-        echo "Deploy: ${{ inputs.deploy }}"
-        echo "Path: ${{ inputs.path }}"
-        echo "Environment: ${{ inputs.environment }}"
-        # write the inputs to a JSON format and to the output variable
-        echo "{" > output.json
-        echo "  \"schema\": \"${{ inputs.schema }}\"," >> output.json
-        echo "  \"deploy\": \"${{ inputs.deploy }}\"," >> output.json
-        echo "  \"path\": \"${{ inputs.path }}\"," >> output.json
-        echo "  \"environment\": \"${{ inputs.environment }}\"" >> output.json
-        echo "}" >> output.json
+        CONFIG_FILE="${WORKSPACE}/${INPUT_PATH}"
+
+        if [ -z "$INPUT_PATH" ] || [ ! -f "$CONFIG_FILE" ]; then
+          CONFIG_FILE="${WORKSPACE}/.github/config/${INPUT_SCHEMA}.yml"
+        fi
+
+        if [ ! -f "$CONFIG_FILE" ]; then
+          echo "::error::File not found: $CONFIG_FILE"
+          exit 1
+        fi
+
+        echo "Parsing YAML file: $CONFIG_FILE"
+        JSON_DATA=$(yq -o=json '.' "$CONFIG_FILE")
+
         echo "Output JSON:"
-        cat output.json
-        echo "Setting output variable 'json' with the generated JSON."
+        echo "$JSON_DATA"
+
         {
           echo "json<<EOF"
-          cat output.json
+          echo "$JSON_DATA"
           echo "EOF"
         } >> "$GITHUB_OUTPUT"
-
