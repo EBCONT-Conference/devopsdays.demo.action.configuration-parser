@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/EBCONT-Conference/devopsdays.demo.action.configuration-parser/compare/v1.0.1...v1.1.0) (2026-08-25)
+
+
+### Features
+
+* Update action ([#3](https://github.com/EBCONT-Conference/devopsdays.demo.action.configuration-parser/issues/3)) ([37a0ea5](https://github.com/EBCONT-Conference/devopsdays.demo.action.configuration-parser/commit/37a0ea5c46a76c5001909abba987ceba115ba209))
+
 ## [1.0.1](https://github.com/EBCONT-Conference/devopsdays.demo.action.configuration-parser/compare/v1.0.0...v1.0.1) (2026-08-10)
 
 
