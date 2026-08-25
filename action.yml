@@ -26,25 +26,28 @@ runs:
     - name: Demo sample output
       id: environment
       shell: bash
+      env:
+        INPUT_SCHEMA: ${{ inputs.schema }}
+        INPUT_DEPLOY: ${{ inputs.deploy }}
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_ENV: ${{ inputs.environment }}
       run: |
-        echo "Running configuration parser demo with the following inputs:"
-        echo "Schema: ${{ inputs.schema }}"
-        echo "Deploy: ${{ inputs.deploy }}"
-        echo "Path: ${{ inputs.path }}"
-        echo "Environment: ${{ inputs.environment }}"
-        # write the inputs to a JSON format and to the output variable
-        echo "{" > output.json
-        echo "  \"schema\": \"${{ inputs.schema }}\"," >> output.json
-        echo "  \"deploy\": \"${{ inputs.deploy }}\"," >> output.json
-        echo "  \"path\": \"${{ inputs.path }}\"," >> output.json
-        echo "  \"environment\": \"${{ inputs.environment }}\"" >> output.json
-        echo "}" >> output.json
+        echo "Running configuration parser demo with inputs..."
+
+        # Safely output JSON using jq to handle escaping and empty values automatically
+        jq -n \
+          --arg schema "$INPUT_SCHEMA" \
+          --arg deploy "$INPUT_DEPLOY" \
+          --arg path "$INPUT_PATH" \
+          --arg environment "$INPUT_ENV" \
+          '{schema: $schema, deploy: $deploy, path: $path, environment: $environment}' > output.json
+
         echo "Output JSON:"
         cat output.json
+
         echo "Setting output variable 'json' with the generated JSON."
         {
           echo "json<<EOF"
           cat output.json
           echo "EOF"
         } >> "$GITHUB_OUTPUT"
-
