@@ -31,51 +31,18 @@ runs:
         INPUT_SCHEMA: ${{ inputs.schema }}
         INPUT_PATH: ${{ inputs.path }}
       run: |
-        CONFIG_FILE=""
+        CONFIG_FILE="${WORKSPACE}/${INPUT_PATH}"
 
-        # 1. Resolve path when inputs.path is provided
-        if [ -n "$INPUT_PATH" ]; then
-          # Handle whether input.path is already absolute or relative to workspace
-          if [[ "$INPUT_PATH" = /* ]]; then
-            TARGET_BASE="$INPUT_PATH"
-          else
-            TARGET_BASE="$WORKSPACE/$INPUT_PATH"
-          fi
-
-          if [ -f "$TARGET_BASE" ]; then
-            CONFIG_FILE="$TARGET_BASE"
-          elif [ -f "$TARGET_BASE/$INPUT_SCHEMA" ]; then
-            CONFIG_FILE="$TARGET_BASE/$INPUT_SCHEMA"
-          elif [ -f "$TARGET_BASE/$INPUT_SCHEMA.yml" ]; then
-            CONFIG_FILE="$TARGET_BASE/$INPUT_SCHEMA.yml"
-          elif [ -f "$TARGET_BASE/$INPUT_SCHEMA.yaml" ]; then
-            CONFIG_FILE="$TARGET_BASE/$INPUT_SCHEMA.yaml"
-          fi
+        if [ -z "$INPUT_PATH" ] || [ ! -f "$CONFIG_FILE" ]; then
+          CONFIG_FILE="${WORKSPACE}/.github/config/${INPUT_SCHEMA}"
         fi
 
-        # 2. Fall back to absolute default locations within github.workspace
-        if [ -z "$CONFIG_FILE" ]; then
-          DEFAULT_DIR="$WORKSPACE/.github/configs"
-          
-          if [ -f "$DEFAULT_DIR/$INPUT_SCHEMA.yml" ]; then
-            CONFIG_FILE="$DEFAULT_DIR/$INPUT_SCHEMA.yml"
-          elif [ -f "$DEFAULT_DIR/$INPUT_SCHEMA.yaml" ]; then
-            CONFIG_FILE="$DEFAULT_DIR/$INPUT_SCHEMA.yaml"
-          elif [ -f "$DEFAULT_DIR/$INPUT_SCHEMA" ]; then
-            CONFIG_FILE="$DEFAULT_DIR/$INPUT_SCHEMA"
-          elif [ -f "$WORKSPACE/$INPUT_SCHEMA.yml" ]; then
-            CONFIG_FILE="$WORKSPACE/$INPUT_SCHEMA.yml"
-          fi
-        fi
-
-        if [ -z "$CONFIG_FILE" ] || [ ! -f "$CONFIG_FILE" ]; then
-          echo "::error::Could not locate YAML file for '$INPUT_SCHEMA' under workspace root: $WORKSPACE"
+        if [ ! -f "$CONFIG_FILE" ]; then
+          echo "::error::File not found: $CONFIG_FILE"
           exit 1
         fi
 
-        echo "Parsing YAML file from absolute path: $CONFIG_FILE"
-
-        # Convert YAML content directly to JSON using yq
+        echo "Parsing YAML file: $CONFIG_FILE"
         JSON_DATA=$(yq -o=json '.' "$CONFIG_FILE")
 
         echo "Output JSON:"
