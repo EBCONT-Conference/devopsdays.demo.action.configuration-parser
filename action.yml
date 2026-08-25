@@ -34,7 +34,7 @@ runs:
         CONFIG_FILE="${WORKSPACE}/${INPUT_PATH}"
 
         if [ -z "$INPUT_PATH" ] || [ ! -f "$CONFIG_FILE" ]; then
-          CONFIG_FILE="${WORKSPACE}/.github/config/${INPUT_SCHEMA}"
+          CONFIG_FILE="${WORKSPACE}/.github/config/${INPUT_SCHEMA}.yml"
         fi
 
         if [ ! -f "$CONFIG_FILE" ]; then
