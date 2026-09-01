@@ -1,0 +1,10 @@
+dockerfile: Dockerfile
+platforms:
+  - linux/amd64
+  - linux/arm64
+runner: ubuntu-latest
+arguments:
+  - key: TEST_ARG
+    value: test
+  - key: ANOTHER-TEST-ARG
+    value: another-test
